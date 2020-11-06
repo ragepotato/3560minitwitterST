@@ -1,39 +1,65 @@
 package com.minitwitter;
 
 import javax.swing.*;
+import javax.swing.event.ListSelectionListener;
 import javax.swing.tree.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
-import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class AdminControl {
     private JPanel panelMain;
-    private JButton addNewUser;
+    private JButton addNewUserButton;
     private JTextField enterUserID;
     private JTextField enterUserGroupID;
-    private JButton addNewUserGroup;
+    private JButton addNewUserGroupButton;
     private JLabel actionText;
     private JTree treeView;
     private JPanel leftMainPanel;
-    private List uniqueIDList;
+    private JButton openUserViewButton;
+    private JButton showUserTotalButton;
+    private JButton showGroupTotalButton;
+    private JButton showMessagesTotalButton;
+    private JButton showPositiveButton;
+    private JPanel rightMainPanel;
+    private JList listOF;
+    private static HashMap uniqueIDList;
     private DefaultMutableTreeNode root;
     private DefaultTreeModel treeModel;
     private UserGroup treeViewList;
+    private int userTotalCount;
+    private int userGroupTotalCount;
+    private JFrame newFrame;
+    private static AdminControl pointer;
 
-    public AdminControl() {
+    public static AdminControl getInstance()  {
+        if (pointer == null){
+            pointer = new AdminControl();
+        }
+        return pointer;
+    }
+
+    private AdminControl() {
         treeViewList = new UserGroup("root");
         treeViewList.setTreeComponents(new ArrayList<TreeComponent>());
-        uniqueIDList = new ArrayList<>();
-        addNewUser.setText("Add User");
-        addNewUserGroup.setText("Add User Group");
-        System.out.println("here1");
+        uniqueIDList = new HashMap<String, TreeComponent>();
+        uniqueIDList.put("root", treeViewList);
+        addNewUserButton.setText("Add User");
+        addNewUserGroupButton.setText("Add User Group");
+        openUserViewButton.setText("Open User View");
+        showUserTotalButton.setText("Show User Total");
+        showGroupTotalButton.setText("Show Group Total");
+        showMessagesTotalButton.setText("Show Messages Total");
+        showPositiveButton.setText("Show Positive Percentage");
+        userTotalCount = 0;
+        userGroupTotalCount = 1;
 
 
-        addNewUser.addActionListener(new ActionListener() {
+        addNewUserButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -45,8 +71,9 @@ public class AdminControl {
                     if (selectedGroupUI.getUserObject() instanceof UserGroup) {   //first, check if we are trying to add to a group
                         String getUserID = enterUserID.getText();
                         if (isUniqueID(getUserID)) { //check if ID is unique
-                            uniqueIDList.add(getUserID);
+
                             User addedUser = new User(getUserID);
+                            uniqueIDList.put(getUserID, addedUser);
                             treeViewList.addToTree(addedUser);
 
 
@@ -56,8 +83,9 @@ public class AdminControl {
                             selectedGroupUI.add(newUserUI);
                             DefaultTreeModel model = (DefaultTreeModel) treeView.getModel();
                             model.reload();
-
+                            userTotalCount++;
                             System.out.println(treeViewList.getTreeComponents());
+                            enterUserID.setText("");
                         } else {
                             actionText.setText("ERROR: " + getUserID + " is already taken.");
                         }
@@ -71,7 +99,7 @@ public class AdminControl {
                 }
             }
         });
-        addNewUserGroup.addActionListener(new ActionListener() {
+        addNewUserGroupButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
@@ -82,8 +110,9 @@ public class AdminControl {
                     if (selectedGroupUI.getUserObject() instanceof UserGroup) {
                         String getUserGroupID = enterUserGroupID.getText();
                         if (isUniqueID(getUserGroupID)) {
-                            uniqueIDList.add(getUserGroupID);
+
                             UserGroup addedUserGroup = new UserGroup(getUserGroupID);
+                            uniqueIDList.put(getUserGroupID, addedUserGroup);
                             System.out.println(addedUserGroup.getUserID());
                             treeViewList.addToTree(addedUserGroup);
                             actionText.setText("Added " + addedUserGroup.getUserID() + " to the tree.");
@@ -91,8 +120,9 @@ public class AdminControl {
                             selectedGroupUI.add(newUserGroupUI);
                             DefaultTreeModel model = (DefaultTreeModel) treeView.getModel();
                             model.reload();
+                            userGroupTotalCount++;
                             System.out.println(treeViewList.getTreeComponents());
-
+                            enterUserGroupID.setText("");
                         } else {
                             actionText.setText("ERROR: " + getUserGroupID + " is already taken.");
                         }
@@ -110,19 +140,66 @@ public class AdminControl {
 
 
         });
+        showUserTotalButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionText.setText("Total user count: " + userTotalCount);
+            }
+        });
+        showGroupTotalButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                actionText.setText("Total user group count: " + userGroupTotalCount);
+            }
+        });
+        openUserViewButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                DefaultMutableTreeNode selectedUser = (DefaultMutableTreeNode) treeView.getSelectionPath().getLastPathComponent();
+                if (selectedUser.getUserObject() instanceof User) {
+                    System.out.println("Opened " + selectedUser);
+                    String userID = ((User) selectedUser.getUserObject()).getUserID();
+                    UserViewUI newUserView = new UserViewUI((User) selectedUser.getUserObject());
+                    newUserView.showUserViewUI();
+                    System.out.println(getUniqueIDList());
+//                    JFrame userFrame = new JFrame(userID);
+//                    userFrame.setContentPane(new UserViewUI(userID).getUserViewPanel());
+//                    userFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+//                    userFrame.setVisible(true);
+                }
+                else{
+                    System.out.println("Not a user");
+                }
+
+            }
+        });
     }
 
     public boolean isUniqueID(String uniqueID) {
-        return !uniqueIDList.contains(uniqueID);
+        return !uniqueIDList.containsKey(uniqueID);
     }
 
+    public HashMap getUniqueIDList() {
+        return uniqueIDList;
+    }
 
-    public static void main(String[] args) {
+    public void createAdminControlPanel(){
         JFrame frame = new JFrame("App");
         frame.setContentPane(new AdminControl().panelMain);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+        frame.setSize(800,400);
     }
+
+
+
+
+//    public static void main(String[] args) {
+//        JFrame frame = new JFrame("App");
+//        frame.setContentPane(new AdminControl().panelMain);
+//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+//        frame.setVisible(true);
+//    }
 
 
     private void createUIComponents() {

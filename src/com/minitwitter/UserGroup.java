@@ -19,8 +19,8 @@ public class UserGroup implements TreeComponent{
 
 
     public String getUserID() {
-
         return userID;
+
     }
 
     public String printTree(){
