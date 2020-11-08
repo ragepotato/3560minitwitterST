@@ -9,9 +9,9 @@ public class User extends Subject implements TreeComponent, Observer {
     private List<User> followerList;
     private List<User> followingList;
     private List<String> twitterMessages;
+    private UserViewUI userViewUI;
 
     public User(String userID) {
-        System.out.println("Created new user.");
         this.userID = userID;
         followingList = new ArrayList();
         followerList = new ArrayList();
@@ -24,14 +24,8 @@ public class User extends Subject implements TreeComponent, Observer {
     }
 
     public String getUserID() {
-
         return userID;
     }
-
-    public String printTree(){
-        return "  -" + userID;
-    }
-
 
     public void setUserID(String userID) {
         this.userID = userID;
@@ -40,12 +34,12 @@ public class User extends Subject implements TreeComponent, Observer {
     public void addFollower(User userID){
         followerList.add(userID);
         attach(userID);
+        attach(userID.getUserViewUI());
     }
 
     public void addFollowing(User userID){
         followingList.add(userID);
     }
-
 
     public void setFollowerList(List followerList) {
         this.followerList = followerList;
@@ -68,7 +62,7 @@ public class User extends Subject implements TreeComponent, Observer {
     }
 
     public void postTweet(String tweet) {
-        System.out.println(userID + " just tweeted: " + tweet);
+        tweet = "@" + userID + " tweeted: " + tweet;
         twitterMessages.add(tweet);
         notifyFollowers(tweet);
     }
@@ -80,4 +74,12 @@ public class User extends Subject implements TreeComponent, Observer {
         System.out.println(twitterMessages);
     }
 
+
+    public UserViewUI getUserViewUI() {
+            return userViewUI;
+    }
+
+    public void setUserViewUI(UserViewUI userViewUI) {
+        this.userViewUI = userViewUI;
+    }
 }

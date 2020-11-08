@@ -33,8 +33,9 @@ public class AdminControl {
     private UserGroup treeViewList;
     private int userTotalCount;
     private int userGroupTotalCount;
-    private JFrame newFrame;
+
     private static AdminControl pointer;
+    private JFrame mainFrame;
 
     public static AdminControl getInstance()  {
         if (pointer == null){
@@ -57,6 +58,7 @@ public class AdminControl {
         showPositiveButton.setText("Show Positive Percentage");
         userTotalCount = 0;
         userGroupTotalCount = 1;
+
 
 
         addNewUserButton.addActionListener(new ActionListener() {
@@ -87,15 +89,16 @@ public class AdminControl {
                             System.out.println(treeViewList.getTreeComponents());
                             enterUserID.setText("");
                         } else {
-                            actionText.setText("ERROR: " + getUserID + " is already taken.");
+                            errorDialog("ERROR: " + getUserID + " is already taken.");
                         }
                     } else {
-                        actionText.setText("ERROR: " + selectedGroupUI + " is not a User Group.");
+                        errorDialog("ERROR: " + selectedGroupUI + " is not a User Group.");
+
                     }
 
                 }
                 else{
-                    actionText.setText("ERROR: Please choose where to add.");
+                    errorDialog("ERROR: Choose where to add on tree.");
                 }
             }
         });
@@ -160,7 +163,7 @@ public class AdminControl {
                     System.out.println("Opened " + selectedUser);
                     String userID = ((User) selectedUser.getUserObject()).getUserID();
                     UserViewUI newUserView = new UserViewUI((User) selectedUser.getUserObject());
-
+                    ((User) selectedUser.getUserObject()).setUserViewUI(newUserView);
                     newUserView.showUserViewUI();
                     System.out.println(newUserView.toString());
                     System.out.println(getUniqueIDList());
@@ -184,11 +187,11 @@ public class AdminControl {
     }
 
     public void createAdminControlPanel(){
-        JFrame frame = new JFrame("App");
-        frame.setContentPane(new AdminControl().panelMain);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.setSize(800,400);
+        mainFrame = new JFrame("App");
+        mainFrame.setContentPane(new AdminControl().panelMain);
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setVisible(true);
+        mainFrame.setSize(800,400);
     }
 
 
@@ -200,6 +203,13 @@ public class AdminControl {
 //        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 //        frame.setVisible(true);
 //    }
+
+    private void errorDialog(String errorMessage){
+        JOptionPane.showMessageDialog(mainFrame,
+                errorMessage,
+                "Inane error",
+                JOptionPane.ERROR_MESSAGE);
+    }
 
 
     private void createUIComponents() {

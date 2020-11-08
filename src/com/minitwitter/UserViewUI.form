@@ -13,7 +13,9 @@
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-13466961"/>
+        </properties>
         <border type="none"/>
         <children>
           <component id="c4bb3" class="javax.swing.JTextField" binding="enterUserField">
@@ -54,7 +56,9 @@
         <constraints>
           <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-13466961"/>
+        </properties>
         <border type="none"/>
         <children>
           <component id="1b6f9" class="javax.swing.JTextField" binding="enterTweetField">
@@ -95,20 +99,22 @@
         <constraints>
           <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-13466961"/>
+        </properties>
         <border type="none"/>
         <children>
           <component id="227ac" class="javax.swing.JList" binding="currentFollowList" custom-create="true">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="5" use-parent-layout="false">
                 <preferred-size width="150" height="50"/>
               </grid>
             </constraints>
             <properties>
-              <background color="-5290437"/>
+              <background color="-13466961"/>
               <foreground color="-5263941"/>
-              <selectionBackground color="-9975258"/>
-              <selectionForeground color="-15192577"/>
+              <selectionBackground color="-13670966"/>
+              <selectionForeground color="-1"/>
             </properties>
           </component>
         </children>
@@ -118,16 +124,20 @@
         <constraints>
           <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false"/>
         </constraints>
-        <properties/>
+        <properties>
+          <background color="-13466961"/>
+        </properties>
         <border type="none"/>
         <children>
           <component id="1e9c9" class="javax.swing.JList" binding="newsFeedList" custom-create="true">
             <constraints>
-              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="0" use-parent-layout="false">
+              <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="6" hsize-policy="2" anchor="0" fill="3" indent="5" use-parent-layout="false">
                 <preferred-size width="150" height="50"/>
               </grid>
             </constraints>
-            <properties/>
+            <properties>
+              <background color="-13466961"/>
+            </properties>
           </component>
         </children>
       </grid>

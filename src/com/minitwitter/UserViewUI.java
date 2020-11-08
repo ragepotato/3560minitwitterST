@@ -18,12 +18,13 @@ public class UserViewUI implements Observer {
     private JButton postTweetButton;
     private JList newsFeedList;
     private JPanel followingPanel;
-    private JList list1;
-    private DefaultListModel listModel1;
-    private DefaultListModel listModel2;
+
+    private DefaultListModel followingListModel;
+    private DefaultListModel twitterFeedModel;
 
     private UserGroup treeOfUsers;
     private HashMap uniqueIDList;
+    JFrame userFrame;
 
 
     public UserViewUI(User user) {
@@ -35,30 +36,31 @@ public class UserViewUI implements Observer {
         followUserButton.setText("Follow User");
         postTweetButton.setText("Post Tweet");
         uniqueIDList = AdminControl.getInstance().getUniqueIDList();
-        //newsFeedList = new JList(user.getTwitterMessages().toArray());
-
-//        if (user.getTwitterMessages() != null){
-//            newsFeedList = new JList((ListModel) user.getTwitterMessages());
-//        }
-
-
-
+        for (Object aTweet : user.getTwitterMessages()) {
+            twitterFeedModel.addElement(aTweet);
+        }
+        followingListModel.clear();
+        for (Object aTweet : user.getFollowingList()) {
+            followingListModel.addElement(aTweet);
+        }
         followUserButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-
                 String followUser = enterUserField.getText();
-                if (uniqueIDList.containsKey(followUser) && !userID.equals(followUser) && uniqueIDList.get(followUser) instanceof User){
+                if (uniqueIDList.containsKey(followUser) && !userID.equals(followUser) && uniqueIDList.get(followUser) instanceof User) {
                     System.out.println("Yes! We can get " + followUser);
                     User nowFollowingUser = (User) uniqueIDList.get(followUser);
                     nowFollowingUser.addFollower(user);
                     user.addFollowing(nowFollowingUser);
-                    nowFollowingUser.attach(updateList());
+                    enterUserField.setText("");
+                    followingListModel.addElement(nowFollowingUser.getUserID());
 
-                }
-                else{
-                    System.out.println("Nope can't do that");
+
+                } else {
+                    JOptionPane.showMessageDialog(userFrame,
+                            "ERROR: Cannot follow user",
+                            "Inane error",
+                            JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -68,38 +70,36 @@ public class UserViewUI implements Observer {
                 String tweet = enterTweetField.getText();
                 user.postTweet(tweet);
 
-                listModel2.clear();
-
-                for (Object aTweet : user.getTwitterMessages()){
-                    listModel2.addElement(aTweet);
-                }
-                userViewPanel.updateUI();
+                twitterFeedModel.addElement("@You tweeted: " + tweet);
+                enterTweetField.setText("");
 
             }
         });
     }
 
-    public void showUserViewUI(){
-        JFrame userFrame = new JFrame(userID);
+    public void showUserViewUI() {
+        userFrame = new JFrame(userID);
         userFrame.setContentPane(userViewPanel);
         userFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        userFrame.setSize(500,600);
+        userFrame.setSize(500, 600);
         userFrame.setVisible(true);
     }
 
 
-    public JPanel getUserViewPanel(){
+    public JPanel getUserViewPanel() {
         return userViewPanel;
     }
 
 
     private void createUIComponents() {
         System.out.println(user.getTwitterMessages());
-        listModel1 = new DefaultListModel();
-        listModel2 = new DefaultListModel();
+        followingListModel = new DefaultListModel();
+        twitterFeedModel = new DefaultListModel();
 
-        currentFollowList = new JList(listModel1);
-        newsFeedList = new JList(listModel2);
+        currentFollowList = new JList(followingListModel);
+        newsFeedList = new JList(twitterFeedModel);
+        twitterFeedModel.clear();
+
 
 
         // TODO: place custom component creation code here
@@ -107,11 +107,14 @@ public class UserViewUI implements Observer {
 
     @Override
     public void getUpdate(String tweet) {
-        System.out.println("Hey there");
-        listModel2.addElement(tweet);
+        twitterFeedModel.clear();
+
+        for (Object aTweet : user.getTwitterMessages()) {
+            twitterFeedModel.addElement(aTweet);
+        }
     }
 
-    private UserViewUI updateList(){
+    private UserViewUI updateList() {
         return this;
     }
 }

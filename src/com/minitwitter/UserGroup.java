@@ -2,7 +2,7 @@ package com.minitwitter;
 
 import java.util.List;
 
-public class UserGroup implements TreeComponent{
+public class UserGroup implements TreeComponent {
 
     private String userID;
     private List<TreeComponent> treeComponents;
@@ -12,24 +12,17 @@ public class UserGroup implements TreeComponent{
     }
 
     @Override //for JTree
-    public String toString(){
+    public String toString() {
         return userID;
     }
-
-
 
     public String getUserID() {
         return userID;
-
     }
-
-
-
 
     public void setUserID(String userID) {
         this.userID = userID;
     }
-
 
     public List<TreeComponent> getTreeComponents() {
         return treeComponents;
@@ -39,7 +32,7 @@ public class UserGroup implements TreeComponent{
         this.treeComponents = treeComponents;
     }
 
-    public void addToTree(TreeComponent treeComponent){
+    public void addToTree(TreeComponent treeComponent) {
         this.treeComponents.add(treeComponent);
     }
 
