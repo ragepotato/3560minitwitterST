@@ -160,12 +160,12 @@ public class AdminControl {
                     System.out.println("Opened " + selectedUser);
                     String userID = ((User) selectedUser.getUserObject()).getUserID();
                     UserViewUI newUserView = new UserViewUI((User) selectedUser.getUserObject());
+
                     newUserView.showUserViewUI();
+                    System.out.println(newUserView.toString());
                     System.out.println(getUniqueIDList());
-//                    JFrame userFrame = new JFrame(userID);
-//                    userFrame.setContentPane(new UserViewUI(userID).getUserViewPanel());
-//                    userFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-//                    userFrame.setVisible(true);
+                    System.out.println(uniqueIDList);
+
                 }
                 else{
                     System.out.println("Not a user");

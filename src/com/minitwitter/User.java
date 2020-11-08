@@ -68,6 +68,7 @@ public class User extends Subject implements TreeComponent, Observer {
     }
 
     public void postTweet(String tweet) {
+        System.out.println(userID + " just tweeted: " + tweet);
         twitterMessages.add(tweet);
         notifyFollowers(tweet);
     }

@@ -23,18 +23,7 @@ public class UserGroup implements TreeComponent{
 
     }
 
-    public String printTree(){
 
-
-        if (getTreeComponents() != null) {
-            System.out.println(" -" + userID);
-            for(TreeComponent treeComponent : getTreeComponents()) {
-                System.out.println(treeComponent.printTree());
-
-            }
-        }
-        return "";
-    }
 
 
     public void setUserID(String userID) {

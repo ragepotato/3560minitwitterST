@@ -7,8 +7,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
-public class UserViewUI {
+public class UserViewUI implements Observer {
     private String userID;
+    private User user;
     private JButton followUserButton;
     private JPanel userViewPanel;
     private JTextField enterUserField;
@@ -17,16 +18,29 @@ public class UserViewUI {
     private JButton postTweetButton;
     private JList newsFeedList;
     private JPanel followingPanel;
+    private JList list1;
+    private DefaultListModel listModel1;
+    private DefaultListModel listModel2;
+
     private UserGroup treeOfUsers;
     private HashMap uniqueIDList;
 
 
     public UserViewUI(User user) {
-        this.userID = user.getUserID();
 
+
+        this.user = user;
+        this.userID = user.getUserID();
+        System.out.println("User: " + user.getUserID());
         followUserButton.setText("Follow User");
         postTweetButton.setText("Post Tweet");
         uniqueIDList = AdminControl.getInstance().getUniqueIDList();
+        //newsFeedList = new JList(user.getTwitterMessages().toArray());
+
+//        if (user.getTwitterMessages() != null){
+//            newsFeedList = new JList((ListModel) user.getTwitterMessages());
+//        }
+
 
 
         followUserButton.addActionListener(new ActionListener() {
@@ -40,6 +54,8 @@ public class UserViewUI {
                     User nowFollowingUser = (User) uniqueIDList.get(followUser);
                     nowFollowingUser.addFollower(user);
                     user.addFollowing(nowFollowingUser);
+                    nowFollowingUser.attach(updateList());
+
                 }
                 else{
                     System.out.println("Nope can't do that");
@@ -51,6 +67,13 @@ public class UserViewUI {
             public void actionPerformed(ActionEvent e) {
                 String tweet = enterTweetField.getText();
                 user.postTweet(tweet);
+
+                listModel2.clear();
+
+                for (Object aTweet : user.getTwitterMessages()){
+                    listModel2.addElement(aTweet);
+                }
+                userViewPanel.updateUI();
 
             }
         });
@@ -70,5 +93,25 @@ public class UserViewUI {
     }
 
 
+    private void createUIComponents() {
+        System.out.println(user.getTwitterMessages());
+        listModel1 = new DefaultListModel();
+        listModel2 = new DefaultListModel();
 
+        currentFollowList = new JList(listModel1);
+        newsFeedList = new JList(listModel2);
+
+
+        // TODO: place custom component creation code here
+    }
+
+    @Override
+    public void getUpdate(String tweet) {
+        System.out.println("Hey there");
+        listModel2.addElement(tweet);
+    }
+
+    private UserViewUI updateList(){
+        return this;
+    }
 }
