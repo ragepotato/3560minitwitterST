@@ -31,6 +31,14 @@ public class User extends Subject implements TreeComponent, Observer {
         this.userID = userID;
     }
 
+    @Override
+    public void accept(TreeComponentVisitor visitor) {
+        visitor.visitUser(this);
+    }
+
+
+
+
     public void addFollower(User userID){
         followerList.add(userID);
         attach(userID);

@@ -24,6 +24,12 @@ public class UserGroup implements TreeComponent {
         this.userID = userID;
     }
 
+    @Override
+    public void accept(TreeComponentVisitor visitor) {
+
+        visitor.visitUserGroup(this);
+    }
+
     public List<TreeComponent> getTreeComponents() {
         return treeComponents;
     }

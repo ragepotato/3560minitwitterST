@@ -31,8 +31,9 @@ public class AdminControl {
     private DefaultMutableTreeNode root;
     private DefaultTreeModel treeModel;
     private UserGroup treeViewList;
-    private int userTotalCount;
-    private int userGroupTotalCount;
+    private static int userTotalCount;
+    private static int userGroupTotalCount;
+
 
     private static AdminControl pointer;
     private JFrame mainFrame;
@@ -57,7 +58,7 @@ public class AdminControl {
         showMessagesTotalButton.setText("Show Messages Total");
         showPositiveButton.setText("Show Positive Percentage");
         userTotalCount = 0;
-        userGroupTotalCount = 1;
+        userGroupTotalCount = 0;
 
 
 
@@ -81,11 +82,11 @@ public class AdminControl {
 
                             actionText.setText("Added " + addedUser.getUserID() + " to the tree.");
 
-                            DefaultMutableTreeNode newUserUI = new DefaultMutableTreeNode(addedUser);
-                            selectedGroupUI.add(newUserUI);
+                            DefaultMutableTreeNode newUserNode = new DefaultMutableTreeNode(addedUser);
+                            selectedGroupUI.add(newUserNode);
                             DefaultTreeModel model = (DefaultTreeModel) treeView.getModel();
                             model.reload();
-                            userTotalCount++;
+
                             System.out.println(treeViewList.getTreeComponents());
                             enterUserID.setText("");
                         } else {
@@ -119,11 +120,11 @@ public class AdminControl {
                             System.out.println(addedUserGroup.getUserID());
                             treeViewList.addToTree(addedUserGroup);
                             actionText.setText("Added " + addedUserGroup.getUserID() + " to the tree.");
-                            DefaultMutableTreeNode newUserGroupUI = new DefaultMutableTreeNode(addedUserGroup);
-                            selectedGroupUI.add(newUserGroupUI);
+                            DefaultMutableTreeNode newUserGroupNode = new DefaultMutableTreeNode(addedUserGroup);
+                            selectedGroupUI.add(newUserGroupNode);
                             DefaultTreeModel model = (DefaultTreeModel) treeView.getModel();
                             model.reload();
-                            userGroupTotalCount++;
+
                             System.out.println(treeViewList.getTreeComponents());
                             enterUserGroupID.setText("");
                         } else {
@@ -139,29 +140,33 @@ public class AdminControl {
             }
         });
 
-        treeView.addMouseListener(new MouseAdapter() {
-
-
-        });
         showUserTotalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                userTotalCount = 0;
+                CountTotalUsersVisitor userCount = new CountTotalUsersVisitor();
+                treeViewList.accept(userCount);
                 actionText.setText("Total user count: " + userTotalCount);
             }
         });
+
         showGroupTotalButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+                userGroupTotalCount = 0;
+                CountTotalGroupsVisitor groupCount = new CountTotalGroupsVisitor();
+                treeViewList.accept(groupCount);
                 actionText.setText("Total user group count: " + userGroupTotalCount);
+
             }
         });
+
         openUserViewButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 DefaultMutableTreeNode selectedUser = (DefaultMutableTreeNode) treeView.getSelectionPath().getLastPathComponent();
                 if (selectedUser.getUserObject() instanceof User) {
                     System.out.println("Opened " + selectedUser);
-                    String userID = ((User) selectedUser.getUserObject()).getUserID();
                     UserViewUI newUserView = new UserViewUI((User) selectedUser.getUserObject());
                     ((User) selectedUser.getUserObject()).setUserViewUI(newUserView);
                     newUserView.showUserViewUI();
@@ -250,6 +255,15 @@ public class AdminControl {
             }
         });
 
+    }
+
+    public void getUsersTotal(){
+        userTotalCount++;
+    }
+
+
+    public void getGroupsTotal(){
+        userGroupTotalCount++;
     }
 
 
