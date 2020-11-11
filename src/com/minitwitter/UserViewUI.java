@@ -29,7 +29,6 @@ public class UserViewUI implements Observer {
     public UserViewUI(User user) {
         this.user = user;
         this.userID = user.getUserID();
-        System.out.println("User: " + user.getUserID());
         followUserButton.setText("Follow User");
         postTweetButton.setText("Post Tweet");
         uniqueIDList = AdminControl.getInstance().getUniqueIDList();
@@ -46,7 +45,6 @@ public class UserViewUI implements Observer {
                 String followUser = enterUserField.getText();
                 //check if you can follow the user (if they exist, not the same as user, is a user not usergroup)
                 if (uniqueIDList.containsKey(followUser) && !userID.equals(followUser) && uniqueIDList.get(followUser) instanceof User) {
-                    System.out.println("Yes! We can get " + followUser);
                     User nowFollowingUser = (User) uniqueIDList.get(followUser);
                     nowFollowingUser.addFollower(user);
                     user.addFollowing(nowFollowingUser);
@@ -81,7 +79,6 @@ public class UserViewUI implements Observer {
     }
 
     private void createUIComponents() {
-        System.out.println(user.getTwitterMessages());
         followingListModel = new DefaultListModel();
         twitterFeedModel = new DefaultListModel();
         currentFollowList = new JList(followingListModel);

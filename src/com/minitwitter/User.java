@@ -75,8 +75,6 @@ public class User extends Subject implements TreeComponent, Observer {
     @Override
     public void getUpdate(String tweet) {
         twitterMessages.add(tweet);
-        System.out.println(userID + "'s has just been updated: ");
-        System.out.println(twitterMessages);
     }
 
     public UserViewUI getUserViewUI() { //the UserViewUI is also an observer, so that we can update it whenever someone that we follow tweets

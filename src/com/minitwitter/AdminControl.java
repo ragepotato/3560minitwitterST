@@ -35,8 +35,8 @@ public class AdminControl {
     private static int userGroupTotalCount;
     private static int totalMessagesCount;
     private static int totalPositiveCount;
-    private static AdminControl pointer;  //Singleton static instance
     private JFrame mainFrame;
+    private static AdminControl pointer;  //Singleton static instance
 
     public static AdminControl getInstance() {  //Singleton static getter
         if (pointer == null) {
@@ -78,7 +78,6 @@ public class AdminControl {
                             selectedGroupUI.add(newUserNode);
                             DefaultTreeModel model = (DefaultTreeModel) treeView.getModel();
                             model.reload();
-                            System.out.println(treeViewList.getTreeComponents());
                             enterUserID.setText("");
                         } else {
                             errorDialog("ERROR: " + getUserID + " is already taken.");
@@ -103,23 +102,21 @@ public class AdminControl {
                         if (isUniqueID(getUserGroupID)) { //check if ID is unique
                             UserGroup addedUserGroup = new UserGroup(getUserGroupID);
                             uniqueIDList.put(getUserGroupID, addedUserGroup);
-                            System.out.println(addedUserGroup.getUserID());
                             treeViewList.addToTree(addedUserGroup); //add to composite
                             actionText.setText("Added " + addedUserGroup.getUserID() + " to the tree.");
                             DefaultMutableTreeNode newUserGroupNode = new DefaultMutableTreeNode(addedUserGroup);
                             selectedGroupUI.add(newUserGroupNode); //add to UI
                             DefaultTreeModel model = (DefaultTreeModel) treeView.getModel();
                             model.reload();
-                            System.out.println(treeViewList.getTreeComponents());
                             enterUserGroupID.setText("");
                         } else {
-                            actionText.setText("ERROR: " + getUserGroupID + " is already taken.");
+                            errorDialog("ERROR: " + getUserGroupID + " is already taken.");
                         }
                     } else {
-                        actionText.setText("ERROR: " + selectedGroupUI + " is not a User Group.");
+                        errorDialog("ERROR: " + selectedGroupUI + " is not a User Group.");
                     }
                 } else {
-                    actionText.setText("ERROR: Please choose where to add.");
+                    errorDialog("ERROR: Choose where to add on tree.");
                 }
             }
         });
@@ -150,16 +147,11 @@ public class AdminControl {
             public void actionPerformed(ActionEvent e) {
                 DefaultMutableTreeNode selectedUser = (DefaultMutableTreeNode) treeView.getSelectionPath().getLastPathComponent();
                 if (selectedUser.getUserObject() instanceof User) {
-                    System.out.println("Opened " + selectedUser);
                     UserViewUI newUserView = new UserViewUI((User) selectedUser.getUserObject());
                     ((User) selectedUser.getUserObject()).setUserViewUI(newUserView);
-                    newUserView.showUserViewUI();
-                    System.out.println(newUserView.toString());
-                    System.out.println(getUniqueIDList());
-                    System.out.println(uniqueIDList);
-
+                    newUserView.showUserViewUI(); //open the user's UI
                 } else {
-                    System.out.println("Not a user");
+                    errorDialog("ERROR: Not a user.");
                 }
             }
         });
@@ -194,7 +186,7 @@ public class AdminControl {
     }
 
     public void createAdminControlPanel() {  //create the UI/start application
-        mainFrame = new JFrame("App");
+        mainFrame = new JFrame("MiniTwitter");
         mainFrame.setContentPane(new AdminControl().panelMain);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setVisible(true);

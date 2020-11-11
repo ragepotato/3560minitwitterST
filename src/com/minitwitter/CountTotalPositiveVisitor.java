@@ -8,7 +8,6 @@ public class CountTotalPositiveVisitor implements TreeComponentVisitor {
         for (String tweet : user.getTwitterMessages()){ //with each user's list of tweets, looks for positive keywords
             for (String keyword : positiveKeywords) {
                 if (tweet.contains(keyword)) {
-                    System.out.println(tweet);
                     count++; //if found, increments count
                 }
             }
