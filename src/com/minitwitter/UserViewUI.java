@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Vector;
 
+//class to display the specified User's UI
+
 public class UserViewUI implements Observer {
     private String userID;
     private User user;
@@ -18,18 +20,13 @@ public class UserViewUI implements Observer {
     private JButton postTweetButton;
     private JList newsFeedList;
     private JPanel followingPanel;
-
     private DefaultListModel followingListModel;
     private DefaultListModel twitterFeedModel;
-
-    private UserGroup treeOfUsers;
     private HashMap uniqueIDList;
     JFrame userFrame;
 
 
     public UserViewUI(User user) {
-
-
         this.user = user;
         this.userID = user.getUserID();
         System.out.println("User: " + user.getUserID());
@@ -47,6 +44,7 @@ public class UserViewUI implements Observer {
             @Override
             public void actionPerformed(ActionEvent e) {
                 String followUser = enterUserField.getText();
+                //check if you can follow the user (if they exist, not the same as user, is a user not usergroup)
                 if (uniqueIDList.containsKey(followUser) && !userID.equals(followUser) && uniqueIDList.get(followUser) instanceof User) {
                     System.out.println("Yes! We can get " + followUser);
                     User nowFollowingUser = (User) uniqueIDList.get(followUser);
@@ -54,8 +52,6 @@ public class UserViewUI implements Observer {
                     user.addFollowing(nowFollowingUser);
                     enterUserField.setText("");
                     followingListModel.addElement(nowFollowingUser.getUserID());
-
-
                 } else {
                     JOptionPane.showMessageDialog(userFrame,
                             "ERROR: Cannot follow user",
@@ -69,7 +65,6 @@ public class UserViewUI implements Observer {
             public void actionPerformed(ActionEvent e) {
                 String tweet = enterTweetField.getText();
                 user.postTweet(tweet);
-
                 twitterFeedModel.addElement("@You tweeted: " + tweet);
                 enterTweetField.setText("");
 
@@ -77,7 +72,7 @@ public class UserViewUI implements Observer {
         });
     }
 
-    public void showUserViewUI() {
+    public void showUserViewUI() { //create and show the UI
         userFrame = new JFrame(userID);
         userFrame.setContentPane(userViewPanel);
         userFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -85,36 +80,22 @@ public class UserViewUI implements Observer {
         userFrame.setVisible(true);
     }
 
-
-    public JPanel getUserViewPanel() {
-        return userViewPanel;
-    }
-
-
     private void createUIComponents() {
         System.out.println(user.getTwitterMessages());
         followingListModel = new DefaultListModel();
         twitterFeedModel = new DefaultListModel();
-
         currentFollowList = new JList(followingListModel);
         newsFeedList = new JList(twitterFeedModel);
         twitterFeedModel.clear();
-
-
-
         // TODO: place custom component creation code here
     }
 
     @Override
-    public void getUpdate(String tweet) {
+    public void getUpdate(String tweet) {   //updates the UI whenever someone that the user follows tweets
         twitterFeedModel.clear();
-
         for (Object aTweet : user.getTwitterMessages()) {
             twitterFeedModel.addElement(aTweet);
         }
     }
 
-    private UserViewUI updateList() {
-        return this;
-    }
 }

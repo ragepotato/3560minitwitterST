@@ -2,10 +2,10 @@ package com.minitwitter;
 
 import java.util.List;
 
-public class UserGroup implements TreeComponent {
+public class UserGroup implements TreeComponent { //composite class with hierarchy implements interface
 
     private String userID;
-    private List<TreeComponent> treeComponents;
+    private List<TreeComponent> treeComponents; //composite (UserGroup) can have a list of TreeComponents
 
     public UserGroup(String userID) {
         this.userID = userID;

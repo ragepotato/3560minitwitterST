@@ -3,7 +3,7 @@ package com.minitwitter;
 public class CountTotalUsersVisitor implements TreeComponentVisitor {
     @Override
     public void visitUser(User user) {
-        AdminControl.getInstance().getUsersTotal();
+        AdminControl.getInstance().getUsersTotal(); //when visiting a user in tree, increment total
     }
 
     @Override

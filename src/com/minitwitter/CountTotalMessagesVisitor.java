@@ -1,14 +1,14 @@
 package com.minitwitter;
 
-public class CountTotalGroupsVisitor implements TreeComponentVisitor {
+public class CountTotalMessagesVisitor implements TreeComponentVisitor{
 
     @Override
     public void visitUser(User user) {
+        AdminControl.getInstance().getTotalMessagesCount(user.getTwitterMessages().size()); //adds all the user's feed sizes together
     }
 
     @Override
     public void visitUserGroup(UserGroup userGroup) {
-        AdminControl.getInstance().getGroupsTotal();  //when visiting a usergroup, increment total
         if (userGroup.getTreeComponents() != null) {
             for (TreeComponent treeComponent : userGroup.getTreeComponents()) {
                 treeComponent.accept(this);

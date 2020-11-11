@@ -11,6 +11,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+//main UI class, also a singleton so only one instance
+
 public class AdminControl {
     private JPanel panelMain;
     private JButton addNewUserButton;
@@ -26,27 +28,25 @@ public class AdminControl {
     private JButton showMessagesTotalButton;
     private JButton showPositiveButton;
     private JPanel rightMainPanel;
-    private JList listOF;
-    private static HashMap uniqueIDList;
+    private static HashMap uniqueIDList;  //data structure to check if User/UserGroup ID is taken, also returns TreeComponent object for easy access
     private DefaultMutableTreeNode root;
-    private DefaultTreeModel treeModel;
     private UserGroup treeViewList;
     private static int userTotalCount;
     private static int userGroupTotalCount;
-
-
-    private static AdminControl pointer;
+    private static int totalMessagesCount;
+    private static int totalPositiveCount;
+    private static AdminControl pointer;  //Singleton static instance
     private JFrame mainFrame;
 
-    public static AdminControl getInstance()  {
-        if (pointer == null){
+    public static AdminControl getInstance() {  //Singleton static getter
+        if (pointer == null) {
             pointer = new AdminControl();
         }
         return pointer;
     }
 
-    private AdminControl() {
-        treeViewList = new UserGroup("root");
+    private AdminControl() {  //Singleton private constructor
+        treeViewList = new UserGroup("root"); //the composite tree list
         treeViewList.setTreeComponents(new ArrayList<TreeComponent>());
         uniqueIDList = new HashMap<String, TreeComponent>();
         uniqueIDList.put("root", treeViewList);
@@ -59,34 +59,25 @@ public class AdminControl {
         showPositiveButton.setText("Show Positive Percentage");
         userTotalCount = 0;
         userGroupTotalCount = 0;
-
-
+        totalMessagesCount = 0;
 
         addNewUserButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
-
                 TreeSelectionModel checkSelected = treeView.getSelectionModel();
-
-                if (checkSelected.getSelectionCount() > 0) {
+                if (checkSelected.getSelectionCount() > 0) {  //check if we specified where we are adding
                     DefaultMutableTreeNode selectedGroupUI = (DefaultMutableTreeNode) treeView.getSelectionPath().getLastPathComponent();
-                    if (selectedGroupUI.getUserObject() instanceof UserGroup) {   //first, check if we are trying to add to a group
+                    if (selectedGroupUI.getUserObject() instanceof UserGroup) {   //check if we are trying to add to a group
                         String getUserID = enterUserID.getText();
                         if (isUniqueID(getUserID)) { //check if ID is unique
-
                             User addedUser = new User(getUserID);
                             uniqueIDList.put(getUserID, addedUser);
                             treeViewList.addToTree(addedUser);
-
-
                             actionText.setText("Added " + addedUser.getUserID() + " to the tree.");
-
                             DefaultMutableTreeNode newUserNode = new DefaultMutableTreeNode(addedUser);
                             selectedGroupUI.add(newUserNode);
                             DefaultTreeModel model = (DefaultTreeModel) treeView.getModel();
                             model.reload();
-
                             System.out.println(treeViewList.getTreeComponents());
                             enterUserID.setText("");
                         } else {
@@ -94,37 +85,31 @@ public class AdminControl {
                         }
                     } else {
                         errorDialog("ERROR: " + selectedGroupUI + " is not a User Group.");
-
                     }
-
-                }
-                else{
+                } else {
                     errorDialog("ERROR: Choose where to add on tree.");
                 }
             }
         });
+
         addNewUserGroupButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
                 TreeSelectionModel checkSelected = treeView.getSelectionModel();
-
-                if (checkSelected.getSelectionCount() > 0) {
+                if (checkSelected.getSelectionCount() > 0) { //check if we specified where we are adding
                     DefaultMutableTreeNode selectedGroupUI = (DefaultMutableTreeNode) treeView.getSelectionPath().getLastPathComponent();
-                    if (selectedGroupUI.getUserObject() instanceof UserGroup) {
+                    if (selectedGroupUI.getUserObject() instanceof UserGroup) { //check if we are trying to add to a group
                         String getUserGroupID = enterUserGroupID.getText();
-                        if (isUniqueID(getUserGroupID)) {
-
+                        if (isUniqueID(getUserGroupID)) { //check if ID is unique
                             UserGroup addedUserGroup = new UserGroup(getUserGroupID);
                             uniqueIDList.put(getUserGroupID, addedUserGroup);
                             System.out.println(addedUserGroup.getUserID());
-                            treeViewList.addToTree(addedUserGroup);
+                            treeViewList.addToTree(addedUserGroup); //add to composite
                             actionText.setText("Added " + addedUserGroup.getUserID() + " to the tree.");
                             DefaultMutableTreeNode newUserGroupNode = new DefaultMutableTreeNode(addedUserGroup);
-                            selectedGroupUI.add(newUserGroupNode);
+                            selectedGroupUI.add(newUserGroupNode); //add to UI
                             DefaultTreeModel model = (DefaultTreeModel) treeView.getModel();
                             model.reload();
-
                             System.out.println(treeViewList.getTreeComponents());
                             enterUserGroupID.setText("");
                         } else {
@@ -133,14 +118,13 @@ public class AdminControl {
                     } else {
                         actionText.setText("ERROR: " + selectedGroupUI + " is not a User Group.");
                     }
-                }
-                else{
+                } else {
                     actionText.setText("ERROR: Please choose where to add.");
                 }
             }
         });
 
-        showUserTotalButton.addActionListener(new ActionListener() {
+        showUserTotalButton.addActionListener(new ActionListener() {  //uses CountTotalUsersVisitor
             @Override
             public void actionPerformed(ActionEvent e) {
                 userTotalCount = 0;
@@ -150,7 +134,7 @@ public class AdminControl {
             }
         });
 
-        showGroupTotalButton.addActionListener(new ActionListener() {
+        showGroupTotalButton.addActionListener(new ActionListener() { //uses CountTotalGroupsVisitor
             @Override
             public void actionPerformed(ActionEvent e) {
                 userGroupTotalCount = 0;
@@ -174,42 +158,50 @@ public class AdminControl {
                     System.out.println(getUniqueIDList());
                     System.out.println(uniqueIDList);
 
-                }
-                else{
+                } else {
                     System.out.println("Not a user");
                 }
+            }
+        });
 
+        showMessagesTotalButton.addActionListener(new ActionListener() { //uses CountTotalMessagesVisitor
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                totalMessagesCount = 0;
+                CountTotalMessagesVisitor messageCount = new CountTotalMessagesVisitor();
+                treeViewList.accept(messageCount);
+                actionText.setText("Total messages in feeds: " + totalMessagesCount);
+            }
+        });
+
+        showPositiveButton.addActionListener(new ActionListener() { //uses CountTotalPositiveVisitor
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                totalPositiveCount = 0;
+                CountTotalPositiveVisitor messageCount = new CountTotalPositiveVisitor();
+                treeViewList.accept(messageCount);
+                actionText.setText("Total positive messages in feeds: " + totalPositiveCount);
             }
         });
     }
 
-    public boolean isUniqueID(String uniqueID) {
+    public boolean isUniqueID(String uniqueID) {  //check in hashmap if id is unique
         return !uniqueIDList.containsKey(uniqueID);
     }
 
-    public HashMap getUniqueIDList() {
+    public HashMap getUniqueIDList() { //retrieve hashmap in other classes
         return uniqueIDList;
     }
 
-    public void createAdminControlPanel(){
+    public void createAdminControlPanel() {  //create the UI/start application
         mainFrame = new JFrame("App");
         mainFrame.setContentPane(new AdminControl().panelMain);
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setVisible(true);
-        mainFrame.setSize(800,400);
+        mainFrame.setSize(800, 400);
     }
 
-
-
-
-//    public static void main(String[] args) {
-//        JFrame frame = new JFrame("App");
-//        frame.setContentPane(new AdminControl().panelMain);
-//        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-//        frame.setVisible(true);
-//    }
-
-    private void errorDialog(String errorMessage){
+    private void errorDialog(String errorMessage) {
         JOptionPane.showMessageDialog(mainFrame,
                 errorMessage,
                 "Inane error",
@@ -221,18 +213,9 @@ public class AdminControl {
         treeViewList = new UserGroup("root");
         treeViewList.setTreeComponents(new ArrayList<TreeComponent>());
         root = new DefaultMutableTreeNode(treeViewList);
-
-
-        //treeModel = new DefaultTreeModel(root);
         treeView = new JTree(root);
         treeView.putClientProperty("JTree.lineStyle", "Angled");
-        //treeView.putClientProperty("JTree.lineStyle", "Horizontal");
         treeView.setCellRenderer(new DefaultTreeCellRenderer() {
-            JLabel treeIconLabel = new JLabel();
-
-            //private ImageIcon loadIcon = new ImageIcon(getClass().getResource("imageFolder/groupIcon.png"));
-            private Icon saveIcon = UIManager.getIcon("OptionPane.informationIcon");
-            private Icon newIcon = new ImageIcon(getClass().getResource("imageFolder/groupIcon.png"));
             @Override
             public Component getTreeCellRendererComponent(JTree tree,
                                                           Object value, boolean selected, boolean expanded,
@@ -241,32 +224,34 @@ public class AdminControl {
 
                 Component c = super.getTreeCellRendererComponent(tree, value,
                         selected, expanded, isLeaf, row, focused);
-                if (treeComponent instanceof UserGroup){
+                if (treeComponent instanceof UserGroup) {
                     setIcon(null);
-                    setFont(new Font("Arial", Font.BOLD , 14));
-                }
-                else{
+                    setFont(new Font("Arial", Font.BOLD, 14));
+                    setForeground(Color.RED);
+                } else {
                     setFont(new Font("Arial", Font.PLAIN, 14));
                     setIcon(null);
                 }
-
-                    //setIcon(saveIcon);
                 return c;
             }
         });
-
     }
 
-    public void getUsersTotal(){
+    public void getUsersTotal() {  //increment every user that we visit in root tree
         userTotalCount++;
     }
 
-
-    public void getGroupsTotal(){
+    public void getGroupsTotal() { //increment every group that we visit in root tree
         userGroupTotalCount++;
     }
 
+    public void getTotalMessagesCount(int addToCount) { //adding all the messages together of users we visit
+        totalMessagesCount += addToCount;
+    }
 
+    public void getTotalPositiveCount(int addToCount) { //adding all the positive messages together of users we visit
+        totalPositiveCount += addToCount;
+    }
 
 
 }

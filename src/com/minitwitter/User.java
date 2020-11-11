@@ -36,17 +36,14 @@ public class User extends Subject implements TreeComponent, Observer {
         visitor.visitUser(this);
     }
 
-
-
-
-    public void addFollower(User userID){
-        followerList.add(userID);
-        attach(userID);
-        attach(userID.getUserViewUI());
+    public void addFollower(User follower){
+        followerList.add(follower);
+        attach(follower);  //attach both the follower and the follower's UI (which updates every time the followee tweets)
+        attach(follower.getUserViewUI());
     }
 
-    public void addFollowing(User userID){
-        followingList.add(userID);
+    public void addFollowing(User userFollowing){
+        followingList.add(userFollowing);
     }
 
     public void setFollowerList(List followerList) {
@@ -57,22 +54,22 @@ public class User extends Subject implements TreeComponent, Observer {
         this.followingList = followingList;
     }
 
-    public List getFollowerList() {
+    public List<User> getFollowerList() {
         return followerList;
     }
 
-    public List getFollowingList() {
+    public List<User> getFollowingList() {
         return followingList;
     }
 
-    public List getTwitterMessages() {
+    public List<String> getTwitterMessages() {
         return twitterMessages;
     }
 
     public void postTweet(String tweet) {
         tweet = "@" + userID + " tweeted: " + tweet;
         twitterMessages.add(tweet);
-        notifyFollowers(tweet);
+        notifyFollowers(tweet); //notify the followers when this user tweets
     }
 
     @Override
@@ -82,8 +79,7 @@ public class User extends Subject implements TreeComponent, Observer {
         System.out.println(twitterMessages);
     }
 
-
-    public UserViewUI getUserViewUI() {
+    public UserViewUI getUserViewUI() { //the UserViewUI is also an observer, so that we can update it whenever someone that we follow tweets
             return userViewUI;
     }
 
