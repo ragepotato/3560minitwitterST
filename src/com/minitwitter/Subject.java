@@ -14,9 +14,9 @@ public abstract class Subject { //aka the User that is being followed
         followers.remove(observer);
     }
 
-    public void notifyFollowers(String tweet) {
+    public void notifyFollowers(String tweet, Long lastUpdateTime) {
         for(Observer follower : followers) {
-            follower.getUpdate(tweet);
+            follower.getUpdate(tweet, lastUpdateTime);
         }
     }
 }

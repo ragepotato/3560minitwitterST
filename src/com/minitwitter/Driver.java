@@ -2,6 +2,7 @@ package com.minitwitter;
 
 //Stephen Tayag
 //CS3560 Assignment 2: Mini Twitter
+//CS3560 Assignment 3: Mini Twitter 2.0
 
 public class Driver {
 

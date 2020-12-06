@@ -9,6 +9,8 @@ public class User extends Subject implements TreeComponent, Observer {
     private List<User> followerList;
     private List<User> followingList;
     private List<String> twitterMessages;
+    private Long creationTime;
+    private Long lastUpdateTime;
     private UserViewUI userViewUI;
 
     public User(String userID) {
@@ -16,6 +18,7 @@ public class User extends Subject implements TreeComponent, Observer {
         followingList = new ArrayList();
         followerList = new ArrayList();
         twitterMessages = new ArrayList();
+        this.creationTime = System.currentTimeMillis();
     }
 
     @Override //for JTree
@@ -69,12 +72,15 @@ public class User extends Subject implements TreeComponent, Observer {
     public void postTweet(String tweet) {
         tweet = "@" + userID + " tweeted: " + tweet;
         twitterMessages.add(tweet);
-        notifyFollowers(tweet); //notify the followers when this user tweets
+        this.lastUpdateTime = System.currentTimeMillis();
+        notifyFollowers(tweet, lastUpdateTime); //notify the followers when this user tweets
+        AdminControl.getInstance().setLastUpdatedUser(userID);
     }
 
     @Override
-    public void getUpdate(String tweet) {
+    public void getUpdate(String tweet, Long lastUpdateTime) {
         twitterMessages.add(tweet);
+        this.lastUpdateTime = lastUpdateTime;
     }
 
     public UserViewUI getUserViewUI() { //the UserViewUI is also an observer, so that we can update it whenever someone that we follow tweets
@@ -83,5 +89,21 @@ public class User extends Subject implements TreeComponent, Observer {
 
     public void setUserViewUI(UserViewUI userViewUI) {
         this.userViewUI = userViewUI;
+    }
+
+    public Long getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Long creationTime) {
+        this.creationTime = creationTime;
+    }
+
+    public Long getLastUpdateTime() {
+        return lastUpdateTime;
+    }
+
+    public void setLastUpdateTime(Long lastUpdateTime) {
+        this.lastUpdateTime = lastUpdateTime;
     }
 }

@@ -13,6 +13,9 @@ import java.util.List;
 
 //main UI class, also a singleton so only one instance
 
+
+//NOTE FOR User/Group ID verification: Already implemented unique ID verification for Assignment 2. Cannot create an ID if it's the same as one already in the tree.
+
 public class AdminControl {
     private JPanel panelMain;
     private JButton addNewUserButton;
@@ -28,6 +31,8 @@ public class AdminControl {
     private JButton showMessagesTotalButton;
     private JButton showPositiveButton;
     private JPanel rightMainPanel;
+    private JButton idVerificationButton;
+    private JButton lastUpdatedButton;
     private static HashMap uniqueIDList;  //data structure to check if User/UserGroup ID is taken, also returns TreeComponent object for easy access
     private DefaultMutableTreeNode root;
     private UserGroup treeViewList;
@@ -37,6 +42,7 @@ public class AdminControl {
     private static int totalPositiveCount;
     private JFrame mainFrame;
     private static AdminControl pointer;  //Singleton static instance
+    private static String lastUpdatedUser;
 
     public static AdminControl getInstance() {  //Singleton static getter
         if (pointer == null) {
@@ -57,6 +63,9 @@ public class AdminControl {
         showGroupTotalButton.setText("Show Group Total");
         showMessagesTotalButton.setText("Show Messages Total");
         showPositiveButton.setText("Show Positive Percentage");
+        idVerificationButton.setText("Unique ID Check");
+        lastUpdatedButton.setText("Last Updated User");
+
         userTotalCount = 0;
         userGroupTotalCount = 0;
         totalMessagesCount = 0;
@@ -175,11 +184,39 @@ public class AdminControl {
                 actionText.setText("Total positive messages in feeds: " + totalPositiveCount);
             }
         });
+
+        idVerificationButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (hasSpaces()){
+                    errorDialog("At least one ID contains a space.");
+                }
+                else{
+                    actionText.setText("All ID's are valid.");
+                }
+            }
+        });
+        lastUpdatedButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+             actionText.setText("Last updated user: " + lastUpdatedUser);
+            }
+        });
     }
 
     public boolean isUniqueID(String uniqueID) {  //check in hashmap if id is unique
         return !uniqueIDList.containsKey(uniqueID);
     }
+
+    public boolean hasSpaces(){
+        for (Object key : uniqueIDList.keySet()) {
+            if (key.toString().contains(" ")) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     public HashMap getUniqueIDList() { //retrieve hashmap in other classes
         return uniqueIDList;
@@ -243,6 +280,10 @@ public class AdminControl {
 
     public void getTotalPositiveCount(int addToCount) { //adding all the positive messages together of users we visit
         totalPositiveCount += addToCount;
+    }
+
+    public void setLastUpdatedUser(String user){
+        lastUpdatedUser = user;
     }
 
 

@@ -20,6 +20,8 @@ public class UserViewUI implements Observer {
     private JButton postTweetButton;
     private JList newsFeedList;
     private JPanel followingPanel;
+    private JLabel creationTime;
+    private JLabel lastUpdateTime;
     private DefaultListModel followingListModel;
     private DefaultListModel twitterFeedModel;
     private HashMap uniqueIDList;
@@ -32,6 +34,9 @@ public class UserViewUI implements Observer {
         followUserButton.setText("Follow User");
         postTweetButton.setText("Post Tweet");
         uniqueIDList = AdminControl.getInstance().getUniqueIDList();
+        creationTime.setText("  Creation time: " + user.getCreationTime());
+        lastUpdateTime.setText("Last news feed update time: ");
+
         for (Object aTweet : user.getTwitterMessages()) {
             twitterFeedModel.addElement(aTweet);
         }
@@ -65,6 +70,7 @@ public class UserViewUI implements Observer {
                 user.postTweet(tweet);
                 twitterFeedModel.addElement("@You tweeted: " + tweet);
                 enterTweetField.setText("");
+                lastUpdateTime.setText("Last news feed update time: " + user.getLastUpdateTime().toString());
 
             }
         });
@@ -88,10 +94,12 @@ public class UserViewUI implements Observer {
     }
 
     @Override
-    public void getUpdate(String tweet) {   //updates the UI whenever someone that the user follows tweets
+    public void getUpdate(String tweet, Long lastUpdate) {   //updates the UI whenever someone that the user follows tweets
         twitterFeedModel.clear();
+        lastUpdateTime.setText("Last news feed update time: " + user.getLastUpdateTime().toString());
         for (Object aTweet : user.getTwitterMessages()) {
             twitterFeedModel.addElement(aTweet);
+
         }
     }
 

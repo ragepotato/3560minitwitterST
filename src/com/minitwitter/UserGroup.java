@@ -6,9 +6,11 @@ public class UserGroup implements TreeComponent { //composite class with hierarc
 
     private String userID;
     private List<TreeComponent> treeComponents; //composite (UserGroup) can have a list of TreeComponents
+    private Long creationTime;
 
     public UserGroup(String userID) {
         this.userID = userID;
+        this.creationTime = System.currentTimeMillis();
     }
 
     @Override //for JTree
@@ -43,4 +45,11 @@ public class UserGroup implements TreeComponent { //composite class with hierarc
     }
 
 
+    public Long getCreationTime() {
+        return creationTime;
+    }
+
+    public void setCreationTime(Long creationTime) {
+        this.creationTime = creationTime;
+    }
 }
